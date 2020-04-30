@@ -64,13 +64,14 @@ checkFSM fileContent = do
 checkPetri : String -> FSMCheck ()
 checkPetri fileContent = do
     content <- maybe (Left JSONError) Right (parse fileContent)
-    petri <- either (const $ Left InvalidFSM) Right (Typedefs.TermParse.deserialiseJSON TPetriExec
+    petri' <- either (const $ Left InvalidFSM) Right (Typedefs.TermParse.deserialiseJSON TPetriExec
       [ (Nat ** expectNat)
       , (List (List Nat, List Nat) ** expectListListEdges)
       , (List Nat ** expectListNat)
       ]
       content)
-    let True = isJust $ composeWithId (Spec petri) (Path petri) (State Petri)
+    petri <- maybe (Left InvalidFSM) Right (convertExec $ petri')
+    let True = isJust $ composeWithId (Spec petri) (Path petri) (State petri)
       | Left InvalidFSM
     pure ()
 
