@@ -9,6 +9,10 @@ data Perm : {o : Type} -> List o -> List o -> Type where
   Nil : Perm [] []
   Ins : Perm xs ys -> SwapDown (a::ys) zs -> Perm (a::xs) zs
 
+Uninhabited (Perm (x::xs) []) where
+  uninhabited  Nil       impossible
+  uninhabited (Ins _ sd) = uninhabited sd
+
 insInjective: Ins {ys=ys1} p1 s1 = Ins {ys=ys2} p2 s2 -> (ys1 = ys2, p1 = p2, s1 = s2)
 insInjective Refl = (Refl, Refl, Refl)
 

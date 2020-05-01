@@ -7,6 +7,10 @@ data SwapDown : List t -> List t -> Type where
   HereS  : SwapDown (a::as) (a::as)
   ThereS : SwapDown (a::as) bs -> SwapDown (a::b::as) (b::bs)
 
+Uninhabited (SwapDown (x::xs) []) where
+  uninhabited  HereS     impossible
+  uninhabited (ThereS _) impossible
+
 congHereS : (as1 = as2) -> (HereS {a} {as=as1} = HereS {a} {as=as2})
 congHereS Refl = Refl
 
